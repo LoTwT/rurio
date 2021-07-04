@@ -3,12 +3,24 @@ extends layouts/login-layout.pug
 block content
     div.loginContainer
         h1 注册
-        form(method="post")
+        form#registerForm(method="post", onsubmit="event.preventDefault();validateForm();")
             input(type="text", name="name", placeholder="name", require="")
             input(type="text", name="username", placeholder="username", require="")
             input(type="text", name="email", placeholder="email", require="")
-            input(type="password", name="password", placeholder="password", require="")
-            input(type="password", name="passwordConfirm", placeholder="confirm password", require="")
+            input#password(type="password", name="password", placeholder="password", require="")
+            input#passwordConfirm(type="password", name="passwordConfirm", placeholder="confirm password", require="")
 
             input(type="submit", value="注册")
         a(href="/login") 已有账号？立即登录
+    
+    script.
+        const passwordField = document.querySelector("#password")
+        const passwordConfirmField = document.querySelector("#passwordConfirm")
+        const registerForm = document.querySelector("#registerForm")
+
+        const validateForm = () => {
+            if (passwordField.value !== passwordConfirmField.value) alert("password check failed!")
+            else {
+                registerForm.submit()
+            }
+        }
