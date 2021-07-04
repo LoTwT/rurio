@@ -1,4 +1,7 @@
 const express = require("express")
+const middleware = require("./middleware")
+const loginRoutes = require("./routes/loginRoutes")
+
 const app = express()
 const port = 3333
 
@@ -8,10 +11,13 @@ const server = app.listen(port, () => console.log(`server is running at http://l
 app.set("view engine", "pug")
 app.set("views", "views")
 
-app.get("/", (request, response, next) => {
+app.get("/", middleware.requireLogin, (req, res, next) => {
     const payload = {
         pageTitle: "Rurio"
     }
 
-    response.status(200).render("Home", payload)
+    res.status(200).render("Home", payload)
 })
+
+// 关联路由
+app.use("/login", loginRoutes)
