@@ -9,5 +9,9 @@ app.set("view engine", "pug")
 app.set("views", "views")
 
 app.get("/", (request, response, next) => {
-    response.status(200).render("Home")
+    const payload = {
+        pageTitle: "Rurio"
+    }
+
+    response.status(200).render("Home", payload)
 })
