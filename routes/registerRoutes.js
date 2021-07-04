@@ -1,3 +1,4 @@
+const UserInfo = require("../schemas/UserInfoSchema")
 const express = require("express")
 
 const app = express()
@@ -25,7 +26,7 @@ router.get("/", (req, res, next) => {
  * @description 注册接口
  * @access      public
  */
-router.post("/", (req, res, next) => {
+router.post("/", async (req, res, next) => {
     // {name, username, email, password, passwordConfirm}
     const name = req.body.name.trim()
     const username = req.body.username.trim()
@@ -36,7 +37,29 @@ router.post("/", (req, res, next) => {
     let payload = req.body
 
     if (name && username && email && password && passwordConfirm) {
-        // 字段非空
+        // 存储 字段非空
+
+        // 查询 数据库是否存在 username 或 email
+        const userInfo = await UserInfo.findOne({
+            $or: [
+                { username },
+                { email },
+            ]
+        }).catch(() => payload.errorMessage = "Something went wrong...")
+
+        // 判断查询结果
+        if (userInfo == null) {
+            // 未查到重复
+        } else {
+            // 查到重复
+            if (userInfo.email === email) {
+                payload.errorMessage = "email already in use"
+            } else if (userInfo.username === username) {
+                payload.errorMessage = "username already in use"
+            }
+
+            res.status(400).render("register", payload)
+        }
     } else {
         // 字段有空值
         payload.errorMessage = "Please input valid value"
