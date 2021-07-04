@@ -16,6 +16,10 @@ app.use(express.static(path.join(__dirname, "public")))
 app.set("view engine", "pug")
 app.set("views", "views")
 
+// 配置 post 接收的数据类型
+app.use(express.json()) // json
+app.use(express.urlencoded({ extended: false })) // x-www-form-urlencoded
+
 app.get("/", middleware.requireLogin, (req, res, next) => {
     const payload = {
         pageTitle: "Rurio"
