@@ -74,8 +74,6 @@ router.post("/", async (req, res, next) => {
         payload.errorMessage = "Please input valid value"
         res.status(200).render("register", payload)
     }
-
-    console.log(req.body)
 })
 
 module.exports = router

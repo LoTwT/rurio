@@ -33,7 +33,8 @@ app.use(express.urlencoded({ extended: false })) // x-www-form-urlencoded
 
 app.get("/", middleware.requireLogin, (req, res, next) => {
     const payload = {
-        pageTitle: "Rurio"
+        pageTitle: "Rurio",
+        currentUser: req.session.user
     }
 
     res.status(200).render("Home", payload)

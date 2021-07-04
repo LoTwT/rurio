@@ -6,5 +6,9 @@ block content
         form(method="post")
             input(type="text", name="username", placeholder="username or email", require="")
             input(type="password", name="password", placeholder="password", require="")
+
             input(type="submit", value="登录")
+
+        p.errorMessage(style={color: "red"}) #{errorMessage}    
+
         a(href="/register") 没有账号？立即注册 
