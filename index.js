@@ -1,11 +1,15 @@
 const express = require("express")
 const middleware = require("./middleware")
 const loginRoutes = require("./routes/loginRoutes")
+const path = require("path")
 
 const app = express()
 const port = 3333
 
 const server = app.listen(port, () => console.log(`server is running at http://localhost:${port}`))
+
+// 指定静态资源
+app.use(express.static(path.join(__dirname, "public")))
 
 // 指定模版引擎
 app.set("view engine", "pug")
