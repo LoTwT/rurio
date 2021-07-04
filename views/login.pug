@@ -1,0 +1,10 @@
+extends layouts/login-layout.pug
+
+block content
+    div.loginContainer
+        h1 登录
+        form(method="post")
+            input(type="text", name="username", placeholder="username or email", require="")
+            input(type="password", name="password", placeholder="password", require="")
+            input(type="submit", value="登录")
+        a(href="/register") 没有账号？立即注册 
