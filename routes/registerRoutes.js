@@ -53,8 +53,12 @@ router.post("/", async (req, res, next) => {
             // 密码加密
             const data = req.body
             data.password = await bcrypt.hash(password, 10)
-            // 存入数据库
-            UserInfo.create(data).then(user => console.log(user))
+
+            // 存入数据库、配置 session
+            UserInfo.create(data).then(user => {
+                req.session.user = user
+                return res.redirect("/")
+            })
         } else {
             // 查到重复
             if (userInfo.email === email) {

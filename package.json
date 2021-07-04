@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "bcryptjs": "^2.4.3",
+    "express-session": "^1.17.2",
     "mongoose": "^5.13.2",
     "nodemon": "^2.0.9",
     "pug": "^3.0.2"
