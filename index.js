@@ -1,6 +1,7 @@
 const express = require("express")
 const middleware = require("./middleware")
 const loginRoutes = require("./routes/loginRoutes")
+const registerRoutes = require("./routes/registerRoutes")
 const path = require("path")
 
 const app = express()
@@ -25,3 +26,4 @@ app.get("/", middleware.requireLogin, (req, res, next) => {
 
 // 关联路由
 app.use("/login", loginRoutes)
+app.use("/register", registerRoutes)
