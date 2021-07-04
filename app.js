@@ -1,6 +1,4 @@
 const middleware = require("./middleware")
-const loginRoutes = require("./routes/loginRoutes")
-const registerRoutes = require("./routes/registerRoutes")
 const path = require("path")
 const session = require("express-session")
 
@@ -41,5 +39,10 @@ app.get("/", middleware.requireLogin, (req, res, next) => {
 })
 
 // 关联路由
+const loginRoutes = require("./routes/loginRoutes")
+const registerRoutes = require("./routes/registerRoutes")
+const logoutRoutes = require("./routes/logoutRoutes")
+
 app.use("/login", loginRoutes)
 app.use("/register", registerRoutes)
+app.use("/logout", logoutRoutes)
