@@ -1,9 +1,10 @@
-const express = require("express")
 const middleware = require("./middleware")
 const loginRoutes = require("./routes/loginRoutes")
 const registerRoutes = require("./routes/registerRoutes")
 const path = require("path")
+const mongoose = require("./database")
 
+const express = require("express")
 const app = express()
 const port = 3333
 
