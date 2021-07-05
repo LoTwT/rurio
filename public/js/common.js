@@ -12,3 +12,16 @@ $("#postTextarea").keyup(event => {
 
     submitButton.prop("disabled", false)
 })
+
+$("#submitPostButton").click(() => {
+    const textbox = $("#postTextarea")
+    const data = {
+        content: textbox.val()
+    }
+
+    // 发起请求
+    // /api/posts => http://localhost:3333/api/posts
+    $.post("/api/posts", data, (postData, status, xhr) => {
+        console.log(postData)
+    })
+})

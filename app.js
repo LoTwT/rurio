@@ -46,3 +46,8 @@ const logoutRoutes = require("./routes/logoutRoutes")
 app.use("/login", loginRoutes)
 app.use("/register", registerRoutes)
 app.use("/logout", logoutRoutes)
+
+// Api Routes
+const postsApiRoutes = require("./routes/api/posts")
+
+app.use("/api/posts", postsApiRoutes)
