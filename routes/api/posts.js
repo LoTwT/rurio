@@ -4,6 +4,19 @@ const PostInfo = require("../../schemas/PostInfoSchema")
 const UserInfo = require("../../schemas/UserInfoSchema")
 
 /**
+ * @route       get /
+ * @description 获取信息接口
+ * @access      public
+ */
+router.get("/", (req, res, next) => {
+    PostInfo.find()
+        .populate("postedBy")
+        .sort({ "createdAt": -1 })
+        .then(results => res.status(200).send(results))
+        .catch(error => res.sendStatus(400).json(error))
+})
+
+/**
  * @route       post /
  * @description posts 接口
  * @access      public
