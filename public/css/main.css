@@ -6,6 +6,7 @@
   --spacing: 15px;
   --greyText: rgb(101, 119, 134);
   --greyButtonText: rgba(0, 0, 0, 0.34);
+  --redButton: rgb(226, 34, 94);
 }
 
 a {
@@ -177,4 +178,13 @@ button {
   background-color: transparent;
   border: none;
   color: var(--greyButtonText);
+}
+
+button i,
+button span {
+  pointer-events: none;
+}
+
+.postButtonContainer.red button.active {
+  color: var(--redButton);
 }

@@ -1,7 +1,6 @@
 $(document).ready(() => {
     // 发起请求
     $.get("/api/posts", results => {
-        console.log(results)
         // 展示数据
         showPosts(results, $(".postsContainer"))
     })
@@ -12,7 +11,6 @@ function showPosts(results, container) {
 
     results.forEach(result => {
         const html = createPostInfoHtml(result)
-        console.log("result => ", result)
         container.append(html)
     })
 

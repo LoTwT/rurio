@@ -13,6 +13,9 @@ $("#postTextarea").keyup(event => {
     submitButton.prop("disabled", false)
 })
 
+/**
+ * 发布
+ */
 $("#submitPostButton").click((event) => {
     const button = $(event.target)
     const textbox = $("#postTextarea")
@@ -30,11 +33,46 @@ $("#submitPostButton").click((event) => {
     })
 })
 
+/**
+ * 点赞
+ */
+$(document).on("click", ".likeButton", event => {
+    const button = $(event.target)
+    const postId = getPostIdFromElement(button)
+
+    // 发起请求
+    $.ajax({
+        url: `/api/posts/${postId}/like`,
+        type: "PUT",
+        success: postData => {
+            button.find("span").text(postData.likes.length || "")
+
+            if (postData.likes.includes(currentUser._id)) {
+                button.addClass("active")
+            } else {
+                button.removeClass("active")
+            }
+        }
+    })
+})
+
+function getPostIdFromElement(element) {
+    const isRoot = element.hasClass("post")
+    const rootElement = isRoot === true ? element : element.closest(".post")
+    const postId = rootElement.data().id
+
+    if (postId == undefined) return alert("postId undefined")
+
+    return postId
+}
+
 function createPostInfoHtml(postData) {
     const postedBy = postData.postedBy
     const timestamp = timeDifference(new Date(), new Date(postData.createdAt))
+    const isLikeButtonActive = postData.likes.includes(currentUser._id) ? "active" : ""
+
     return `
-        <div class="post">
+        <div class="post" data-id="${postData._id}">
             <div class="mainContentContainer">
                 <div class="userImageContainer">
                     <img src="${postedBy.avatar}" alt="">
@@ -59,9 +97,10 @@ function createPostInfoHtml(postData) {
                                 <i class="fa fa-retweet"></i>
                             </button>
                         </div>
-                        <div class="postButtonContainer">
-                            <button>
+                        <div class="postButtonContainer red">
+                            <button class="likeButton ${isLikeButtonActive}">
                                 <i class="fa fa-heart"></i>
+                                <span>${postData.likes.length || ""}</span>
                             </button>
                         </div>
                     </div>
