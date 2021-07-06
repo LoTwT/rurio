@@ -8,6 +8,8 @@ const UserInfoSchema = new Schema({
     password: { type: String, required: true },
     avatar: { type: String, default: "/images/avatar.png" },
     likes: [{ type: Schema.Types.ObjectId, ref: "PostInfo" }],
+    // 从用户角度考虑: 该用户转发了哪条消息
+    retweets: [{ type: Schema.Types.ObjectId, ref: "PostInfo" }],
 }, { timestamps: true })
 
 module.exports = mongoose.model("UserInfo", UserInfoSchema)

@@ -11,8 +11,12 @@ const UserInfo = require("../../schemas/UserInfoSchema")
 router.get("/", (req, res, next) => {
     PostInfo.find()
         .populate("postedBy")
+        .populate("retweetData")
         .sort({ "createdAt": -1 })
-        .then(results => res.status(200).send(results))
+        .then(async results => {
+            results = await UserInfo.populate(results, { path: "retweetData.postedBy" })
+            res.status(200).send(results)
+        })
         .catch(error => res.sendStatus(400).json(error))
 })
 
@@ -65,6 +69,35 @@ router.put("/:id/like", async (req, res, next) => {
     const post = await PostInfo.findByIdAndUpdate(postId, { [option]: { likes: userId } }, { new: true }).catch(error => res.sendStatus(400).json(error))
 
     // 5. 将更新的数据返回
+    res.status(200).send(post)
+})
+
+/**
+ * @route       post /:id/retweet
+ * @description 转发和取消转发接口
+ * @access      private
+ */
+router.post("/:id/retweet", async (req, res, next) => {
+    // 1. 哪条消息被转发、谁转发的
+    const postId = req.params.id
+    const userId = req.session.user._id
+
+    // 2. 用户有没有对这条消息转发过，如果转发过，要将该条转发消息删除
+    const deletedPost = await PostInfo.findOneAndDelete({ postedBy: userId, retweetData: postId }).catch(error => res.sendStatus(400).json(error))
+    const option = deletedPost != null ? "$pull" : "$addToSet"
+
+    // 3. 未转发 复制 post 数据
+    if (deletedPost == null) {
+        await PostInfo.create({ postedBy: userId, retweetData: postId }).catch(error => res.sendStatus(400).json(error))
+    }
+
+    // 4. 更新用户是否转发的标记
+    req.session.user = await UserInfo.findByIdAndUpdate(userId, { [option]: { retweets: postId } }, { new: true }).catch(error => res.sendStatus(400).json(error))
+
+    // 5. 更新信息是否转发的标记
+    const post = await PostInfo.findByIdAndUpdate(postId, { [option]: { retweetUsers: userId } }, { new: true }).catch(error => res.sendStatus(400).json(error))
+
+    // 6. 将更新的数据返回
     res.status(200).send(post)
 })
 
