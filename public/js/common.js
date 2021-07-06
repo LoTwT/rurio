@@ -1,9 +1,11 @@
 // 控制 button 的 disabled 属性
-$("#postTextarea").keyup(event => {
+$("#postTextarea, #replyTextarea").keyup(event => {
     const textbox = $(event.target)
     const value = textbox.val().trim()
 
-    const submitButton = $("#submitPostButton")
+    const isModal = textbox.parents(".modal").length == 1
+
+    const submitButton = isModal ? $("#submitReplyButton") : $("#submitPostButton")
 
     if (value == "") {
         submitButton.prop("disabled", true)
@@ -32,6 +34,18 @@ $("#submitPostButton").click((event) => {
         button.prop("disabled", true)
     })
 })
+
+$("#replyModal").on("shown.bs.modal", event => {
+    const button = $(event.relatedTarget)
+    const postId = getPostIdFromElement(button)
+
+    // 获取当前数据
+    $.get(`/api/posts/${postId}`, result => {
+        showPosts(result, $("#originalPostContainer"))
+    })
+})
+
+$("#replyModal").on("hidden.bs.modal", () => $("#originalPostContainer").html(""))
 
 /**
  * 点赞
@@ -92,11 +106,10 @@ function getPostIdFromElement(element) {
 }
 
 function createPostInfoHtml(postData) {
-    console.log(postData)
     if (postData == null) return alert("postData invalid")
 
     // 判断是不是转发的信息
-    const isRetweet = postData.retweetData == undefined
+    const isRetweet = postData.retweetData !== undefined
 
     postData = isRetweet ? postData.retweetData : postData
 
@@ -122,7 +135,7 @@ function createPostInfoHtml(postData) {
                     </div>
                     <div class="postFooter">
                         <div class="postButtonContainer">
-                            <button>
+                            <button data-bs-toggle="modal" data-bs-target="#replyModal">
                                 <i class="fa fa-comment"></i>
                             </button>
                         </div>
@@ -178,5 +191,23 @@ function timeDifference(current, previous) {
 
     else {
         return Math.round(elapsed / msPerYear) + ' years ago';
+    }
+}
+
+function showPosts(results, container) {
+    container.html("")
+
+    if (!Array.isArray(results)) {
+        results = [results]
+    }
+
+    results.forEach(result => {
+        const html = createPostInfoHtml(result)
+        container.append(html)
+    })
+
+    // 如果数据为空 显示的内容
+    if (results.length === 0) {
+        container.append(`<span class="noResults">Nothing to show...</span>`)
     }
 }

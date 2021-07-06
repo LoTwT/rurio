@@ -5,7 +5,7 @@ const UserInfo = require("../../schemas/UserInfoSchema")
 
 /**
  * @route       get /
- * @description 获取信息接口
+ * @description 获取所有信息接口
  * @access      public
  */
 router.get("/", (req, res, next) => {
@@ -17,6 +17,20 @@ router.get("/", (req, res, next) => {
             results = await UserInfo.populate(results, { path: "retweetData.postedBy" })
             res.status(200).send(results)
         })
+        .catch(error => res.sendStatus(400).json(error))
+})
+
+/**
+ * @route       get /:id
+ * @description 获取单个信息接口
+ * @access      public
+ */
+router.get("/:id", (req, res, next) => {
+    const postId = req.params.id
+    PostInfo.findById({ _id: postId })
+        .populate("postedBy")
+        .populate("retweetData")
+        .then(result => res.status(200).send(result))
         .catch(error => res.sendStatus(400).json(error))
 })
 
