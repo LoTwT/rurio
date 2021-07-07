@@ -43,10 +43,12 @@ app.get("/", middleware.requireLogin, (req, res, next) => {
 const loginRoutes = require("./routes/loginRoutes")
 const registerRoutes = require("./routes/registerRoutes")
 const logoutRoutes = require("./routes/logoutRoutes")
+const postRoutes = require("./routes/postRoutes")
 
 app.use("/login", loginRoutes)
 app.use("/register", registerRoutes)
 app.use("/logout", logoutRoutes)
+app.use("/posts", postRoutes)
 
 // Api Routes
 const postsApiRoutes = require("./routes/api/posts")
