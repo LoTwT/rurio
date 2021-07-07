@@ -48,6 +48,9 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
     })
 })
 
+/**
+ * 回复弹窗
+ */
 $("#replyModal").on("shown.bs.modal", event => {
     const button = $(event.relatedTarget)
     const postId = getPostIdFromElement(button)
@@ -62,6 +65,36 @@ $("#replyModal").on("shown.bs.modal", event => {
 })
 
 $("#replyModal").on("hidden.bs.modal", () => $("#originalPostContainer").html(""))
+
+/**
+ * 删除弹窗
+ */
+$("#deletePostModal").on("shown.bs.modal", event => {
+    const button = $(event.relatedTarget)
+    const postId = getPostIdFromElement(button)
+
+    // 传递 id
+    $("#deletePostButton").attr("data-id", postId)
+})
+
+$("#deletePostModal").click(event => {
+    const postId = $(event.target).data("id")
+
+    // 发起删除请求
+    $.ajax({
+        url: `/api/posts/${postId}`,
+        type: "DELETE",
+        success: (data, status, xhr) => {
+            if (xhr.status !== 202) {
+                // 删除失败
+                alert("delete this post failed!")
+                return
+            }
+
+            location.reload()
+        }
+    })
+})
 
 /**
  * 点赞
@@ -166,6 +199,18 @@ function createPostInfoHtml(postData, largeFont = false) {
         `
     }
 
+    // 删除按钮
+    let button = ""
+
+    // 判断是否是当前登录用户的消息
+    if (postData.postedBy._id === currentUser._id) {
+        buttons = `
+        <button data-id="${postData._id}" data-bs-toggle="modal" data-bs-target="#deletePostModal">
+            <i class="fa fa-times"></i>
+        </button>
+        `
+    }
+
     return `
         <div class="post ${largeFontClass}" data-id="${postData._id}">
             <div class="mainContentContainer">
@@ -177,6 +222,7 @@ function createPostInfoHtml(postData, largeFont = false) {
                         <a href="/profile/${postedBy.username}" class="displayName">${postedBy.name}</a>
                         <span class="username">@${postedBy.username}</span>
                         <span class="date">${timestamp}</span>
+                        ${buttons}
                     </div>
                     ${replyFlag}
                     <div class="postBody">

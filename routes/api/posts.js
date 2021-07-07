@@ -90,7 +90,7 @@ router.post("/", (req, res, next) => {
 /**
  * @route       put /:id/like
  * @description 点赞和取消点赞接口
- * @access      public
+ * @access      private
  */
 router.put("/:id/like", async (req, res, next) => {
     // 1. 哪条消息被点赞、谁点的
@@ -140,5 +140,13 @@ router.post("/:id/retweet", async (req, res, next) => {
     res.status(200).send(post)
 })
 
+/**
+ * @route       delete /:id
+ * @description 消息删除接口
+ * @access      private
+ */
+router.delete("/:id", (req, res, next) => {
+    PostInfo.findByIdAndDelete(req.params.id).then(() => res.sendStatus(202)).catch(error => res.sendStatus(400).json(error))
+})
 
 module.exports = router
