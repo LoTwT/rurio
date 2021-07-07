@@ -3,23 +3,29 @@ const router = express.Router()
 const PostInfo = require("../../schemas/PostInfoSchema")
 const UserInfo = require("../../schemas/UserInfoSchema")
 
+// 接口优化
+async function getPosts(filter) {
+    let results = await PostInfo.find(filter)
+        .populate("postedBy")
+        .populate("retweetData")
+        .populate("replyTo")
+        .sort({ "createdAt": -1 })
+        .catch(error => res.sendStatus(400).json(error))
+
+    results = await UserInfo.populate(results, { path: "replyTo.postedBy" })
+    results = await UserInfo.populate(results, { path: "retweetData.postedBy" })
+
+    return results
+}
+
 /**
  * @route       get /
  * @description 获取所有信息接口
  * @access      private
  */
-router.get("/", (req, res, next) => {
-    PostInfo.find()
-        .populate("postedBy")
-        .populate("retweetData")
-        .populate("replyTo")
-        .sort({ "createdAt": -1 })
-        .then(async results => {
-            results = await UserInfo.populate(results, { path: "retweetData.postedBy" })
-            results = await UserInfo.populate(results, { path: "replyTo.postedBy" })
-            res.status(200).send(results)
-        })
-        .catch(error => res.sendStatus(400).json(error))
+router.get("/", async (req, res, next) => {
+    const results = await getPosts({})
+    res.status(200).send(results)
 })
 
 /**
@@ -27,13 +33,11 @@ router.get("/", (req, res, next) => {
  * @description 获取单个信息接口
  * @access      private
  */
-router.get("/:id", (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
     const postId = req.params.id
-    PostInfo.findById({ _id: postId })
-        .populate("postedBy")
-        .populate("retweetData")
-        .then(result => res.status(200).send(result))
-        .catch(error => res.sendStatus(400).json(error))
+    const results = await getPosts({ _id: postId })
+
+    res.status(200).send(results)
 })
 
 /**
