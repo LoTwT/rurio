@@ -203,3 +203,11 @@ button span {
 .postButtonContainer.green button.active {
   color: var(--greenButton);
 }
+
+.replyFlag {
+  margin-bottom: 5px;
+}
+
+.replyFlag a {
+  color: var(--blue);
+}

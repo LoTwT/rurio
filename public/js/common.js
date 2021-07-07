@@ -18,26 +18,42 @@ $("#postTextarea, #replyTextarea").keyup(event => {
 /**
  * 发布
  */
-$("#submitPostButton").click((event) => {
+$("#submitPostButton,#submitReplyButton").click((event) => {
     const button = $(event.target)
-    const textbox = $("#postTextarea")
+
+    const isModal = button.parents(".modal").length == 1
+    const textbox = isModal ? $("#replyTextarea") : $("#postTextarea")
+
     const data = {
         content: textbox.val()
+    }
+
+    if (isModal) {
+        const id = button.data().id
+        if (id == null) return alert("button id invalid")
+        data.replyTo = id
     }
 
     // 发起请求
     // /api/posts => http://localhost:3333/api/posts
     $.post("/api/posts", data, (postData, status, xhr) => {
-        const html = createPostInfoHtml(postData)
-        $(".postsContainer").prepend(html)
-        textbox.val("")
-        button.prop("disabled", true)
+        if (postData.replyTo) {
+            location.reload()
+        } else {
+            const html = createPostInfoHtml(postData)
+            $(".postsContainer").prepend(html)
+            textbox.val("")
+            button.prop("disabled", true)
+        }
     })
 })
 
 $("#replyModal").on("shown.bs.modal", event => {
     const button = $(event.relatedTarget)
     const postId = getPostIdFromElement(button)
+
+    // 传递 id
+    $("#submitReplyButton").attr("data-id", postId)
 
     // 获取当前数据
     $.get(`/api/posts/${postId}`, result => {
@@ -118,6 +134,24 @@ function createPostInfoHtml(postData) {
     const isLikeButtonActive = postData.likes && postData.likes.includes(currentUser._id) ? "active" : ""
     const isRetweetButtonActive = postData.retweetUsers && postData.retweetUsers.includes(currentUser._id) ? "active" : ""
 
+    // 评论相关
+    let replyFlag = ""
+
+    if (postData.replyTo) {
+        if (!postData.replyTo._id) {
+            return alert("replyTo is not populated")
+        } else if (!postData.replyTo.postedBy._id) {
+            return alert("postedBy is not populated")
+        }
+
+        const replyToUsername = postData.replyTo.postedBy.username
+        replyFlag = `
+            <div class="replyFlag">
+                <a href="/profile/${replyToUsername}">@${replyToUsername}</a>的评论
+            </div>
+        `
+    }
+
     return `
         <div class="post" data-id="${postData._id}">
             <div class="mainContentContainer">
@@ -130,6 +164,7 @@ function createPostInfoHtml(postData) {
                         <span class="username">@${postedBy.username}</span>
                         <span class="date">${timestamp}</span>
                     </div>
+                    ${replyFlag}
                     <div class="postBody">
                         <span>${postData.content}</span>
                     </div>

@@ -6,15 +6,17 @@ const UserInfo = require("../../schemas/UserInfoSchema")
 /**
  * @route       get /
  * @description 获取所有信息接口
- * @access      public
+ * @access      private
  */
 router.get("/", (req, res, next) => {
     PostInfo.find()
         .populate("postedBy")
         .populate("retweetData")
+        .populate("replyTo")
         .sort({ "createdAt": -1 })
         .then(async results => {
             results = await UserInfo.populate(results, { path: "retweetData.postedBy" })
+            results = await UserInfo.populate(results, { path: "replyTo.postedBy" })
             res.status(200).send(results)
         })
         .catch(error => res.sendStatus(400).json(error))
@@ -23,7 +25,7 @@ router.get("/", (req, res, next) => {
 /**
  * @route       get /:id
  * @description 获取单个信息接口
- * @access      public
+ * @access      private
  */
 router.get("/:id", (req, res, next) => {
     const postId = req.params.id
@@ -36,8 +38,8 @@ router.get("/:id", (req, res, next) => {
 
 /**
  * @route       post /
- * @description posts 接口
- * @access      public
+ * @description 创建信息接口
+ * @access      private
  */
 router.post("/", (req, res, next) => {
     // 判断参数是否有效
@@ -49,6 +51,11 @@ router.post("/", (req, res, next) => {
     const postData = {
         content: req.body.content,
         postedBy: req.session.user,
+    }
+
+    // 回复相关
+    if (req.body.replyTo) {
+        postData.replyTo = req.body.replyTo
     }
 
     // 插入数据 到 数据库
