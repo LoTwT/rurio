@@ -24,7 +24,15 @@ async function getPosts(filter) {
  * @access      private
  */
 router.get("/", async (req, res, next) => {
-    const results = await getPosts({})
+    const searchTarget = req.query
+
+    if (searchTarget.isReply !== undefined) {
+        const isReply = searchTarget.isReply == "true"
+        searchTarget.replyTo = { $exists: isReply }
+        delete searchTarget.isReply
+    }
+
+    const results = await getPosts(searchTarget)
     res.status(200).send(results)
 })
 

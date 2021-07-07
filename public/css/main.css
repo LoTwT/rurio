@@ -297,3 +297,29 @@ button span {
 .followersContainer a:hover {
   border-bottom: solid 1px #000;
 }
+
+.tabsContainer {
+  display: flex;
+  border-bottom: solid 1px var(--lightGrey);
+  flex-shrink: 0;
+}
+
+.tab {
+  flex: 1;
+  height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--greyText);
+  font-weight: bold;
+}
+
+.tab.active {
+  color: var(--blue);
+  border-bottom: solid 2px var(--blue);
+}
+
+.tab:hover {
+  color: var(--blue);
+  background-color: var(--blueBackground);
+}
