@@ -1,6 +1,7 @@
 :root {
   --blue: #1fa2f1;
   --blueLight: #9bd1f9;
+  --blueBackground: rgba(212, 237, 255, 0.6);
   --buttonHoverBg: #d4edff;
   --lightGrey: rgb(230, 236, 240);
   --spacing: 15px;
@@ -227,4 +228,72 @@ button span {
 
 .errorMessage {
   padding: var(--spacing);
+}
+
+.coverPhotoContainer {
+  height: 180px;
+  background-color: var(--blue);
+  position: relative;
+}
+
+.profileHeaderContainer .userImageContainer {
+  width: 132px;
+  height: 132px;
+  margin-left: var(--spacing);
+  position: absolute;
+  bottom: -66px;
+}
+
+.profileHeaderContainer .userImageContainer img {
+  border: solid 4px #fff;
+}
+
+.profileHeaderContainer .profileButtonsContainer {
+  text-align: right;
+  padding: var(--spacing);
+  min-height: 66px;
+}
+
+.profileButton,
+.followButton {
+  border: solid 1px var(--blue);
+  color: var(--blue);
+  font-weight: bold;
+  padding: 5px 15px;
+  border-radius: 60px;
+  display: inline-block;
+  margin-left: var(--spacing);
+}
+
+.profileButton:hover,
+.followButton:hover {
+  background-color: var(--blueBackground);
+}
+
+.followButton.following {
+  background-color: var(--blue);
+  color: #fff;
+}
+
+.profileHeaderContainer .userDetailsContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--spacing);
+}
+
+.followersContainer .value {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.followersContainer span:not(.value) {
+  color: var(--greyText);
+}
+
+.followersContainer a {
+  margin-right: 15px;
+}
+
+.followersContainer a:hover {
+  border-bottom: solid 1px #000;
 }
