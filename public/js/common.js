@@ -57,7 +57,7 @@ $("#replyModal").on("shown.bs.modal", event => {
 
     // 获取当前数据
     $.get(`/api/posts/${postId}`, result => {
-        showPosts(result, $("#originalPostContainer"))
+        showPosts(result.postData, $("#originalPostContainer"))
     })
 })
 
@@ -133,7 +133,7 @@ function getPostIdFromElement(element) {
     return postId
 }
 
-function createPostInfoHtml(postData) {
+function createPostInfoHtml(postData, largeFont = false) {
     if (postData == null) return alert("postData invalid")
 
     // 判断是不是转发的信息
@@ -145,6 +145,8 @@ function createPostInfoHtml(postData) {
     const timestamp = timeDifference(new Date(), new Date(postData.createdAt))
     const isLikeButtonActive = postData.likes && postData.likes.includes(currentUser._id) ? "active" : ""
     const isRetweetButtonActive = postData.retweetUsers && postData.retweetUsers.includes(currentUser._id) ? "active" : ""
+
+    const largeFontClass = largeFont ? "largeFont" : ""
 
     // 评论相关
     let replyFlag = ""
@@ -165,7 +167,7 @@ function createPostInfoHtml(postData) {
     }
 
     return `
-        <div class="post" data-id="${postData._id}">
+        <div class="post ${largeFontClass}" data-id="${postData._id}">
             <div class="mainContentContainer">
                 <div class="userImageContainer">
                     <img src="${postedBy.avatar}" alt="">
@@ -257,4 +259,23 @@ function showPosts(results, container) {
     if (results.length === 0) {
         container.append(`<span class="noResults">Nothing to show...</span>`)
     }
+}
+
+function showPostsWithReplies(results, container) {
+    container.html("")
+
+    // 如果有评论消息，展示评论消息
+    if (results.replyTo !== undefined && results.replyTo._id !== undefined) {
+        const html = createPostInfoHtml(results.replyTo)
+        container.append(html)
+    }
+
+    // 展示消息
+    const mainPostHtml = createPostInfoHtml(results.postData, true)
+    container.append(mainPostHtml)
+
+    results.replies && results.replies.forEach(result => {
+        const html = createPostInfoHtml(result)
+        container.append(html)
+    })
 }
