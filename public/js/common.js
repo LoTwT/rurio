@@ -111,6 +111,18 @@ $(document).on("click", ".retweetButton", event => {
     })
 })
 
+/**
+ * 点击消息 进行跳转
+ */
+$(document).on("click", ".post", event => {
+    const element = $(event.target)
+    const postId = getPostIdFromElement(element)
+
+    if (postId !== undefined && !element.is("button")) {
+        window.location.href = `/posts/${postId}`
+    }
+})
+
 function getPostIdFromElement(element) {
     const isRoot = element.hasClass("post")
     const rootElement = isRoot === true ? element : element.closest(".post")
