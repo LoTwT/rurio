@@ -32,6 +32,21 @@ router.get("/", async (req, res, next) => {
         delete searchTarget.isReply
     }
 
+    if (searchTarget.followingOnly !== undefined) {
+        const followingOnly = searchTarget.followingOnly == "true"
+
+        if (followingOnly) {
+            // 获取所有关注的用户 id
+            const objectIds = [req.session.user._id]
+
+            req.session.user.following.forEach(user => objectIds.push(user))
+
+            searchTarget.postedBy = { $in: objectIds }
+        }
+
+        delete searchTarget.followingOnly
+    }
+
     const results = await getPosts(searchTarget)
     res.status(200).send(results)
 })
