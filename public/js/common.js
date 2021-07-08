@@ -161,12 +161,24 @@ $(document).on("click", ".followButton", event => {
                 return
             }
 
+            let count = 1
+
             if (data.following && data.following.includes(userId)) {
                 button.addClass("following")
                 button.text("已关注")
             } else {
                 button.removeClass("following")
-                button.text("关注")
+                button.text("关注");
+                count = -1;
+                window.location.reload()
+            }
+
+            // 获取粉丝数
+            const followersLabel = $("#followersValue")
+            if (followersLabel.length != 0) {
+                let followersText = followersLabel.text();
+                followersText = parseInt(followersText);
+                followersLabel.text(followersText + count)
             }
         }
     })

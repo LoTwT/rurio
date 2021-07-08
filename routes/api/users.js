@@ -20,10 +20,14 @@ router.put("/:userId/follow", async (req, res, next) => {
     const option = isFollowing ? "$pull" : "$addToSet"
 
     // 增加/减少 关注者的 following 容器
-    req.session.user = await UserInfo.findByIdAndUpdate(req.session.user._id, { [option]: { following: userId } }, { new: true })
+    req.session.user = await UserInfo.findByIdAndUpdate(
+        req.session.user._id,
+        { [option]: { following: userId } },
+        { new: true }
+    )
 
     // 增加/减少 粉丝的 followers 容器
-    UserInfo.findByIdAndUpdate(userId, { [option]: { followers: req.session.user._id } })
+    await UserInfo.findByIdAndUpdate(userId, { [option]: { followers: req.session.user._id } })
 
     res.status(200).send(req.session.user)
 })

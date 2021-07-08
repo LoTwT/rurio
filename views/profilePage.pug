@@ -5,6 +5,9 @@ block content
     else
         script.
             const profileUserId = "!{profileUser._id}"
+            const selectedTab = "!{selectedTab}"
+        - followersCount = profileUser.followers.length
+        - followingCount = profileUser.following.length
         .profileHeaderContainer
             .coverPhotoContainer
                 .userImageContainer
@@ -13,7 +16,11 @@ block content
                 if profileUser._id != currentUser._id
                     a.profileButton(href=`/message/${profileUser._id}`)
                         i.fa.fa-envelope
-                    +createFollowButton(profileUser, false)
+                    - const profileUserId = profileUser._id.toString()
+                    - if (currentUser.following && currentUser.following.includes(profileUserId))
+                        +createFollowButton(profileUser, true)
+                    - else
+                        +createFollowButton(profileUser, false)
             .userDetailsContainer
                 span.displayName #{profileUser.name}
                 span.username @#{profileUser.username}
@@ -21,10 +28,10 @@ block content
 
                 .followersContainer
                     a(href=`/profile/${profileUser.username}/following`)
-                        span.value #{0}
+                        span.value #{followingCount}
                         span 关注
                     a(href=`/profile/${profileUser.username}/followers`)
-                        span.value #{0}
+                        span#followersValue.value #{followersCount}
                         span 粉丝
 
         .tabsContainer
