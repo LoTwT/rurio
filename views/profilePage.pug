@@ -35,8 +35,8 @@ block content
                         span 粉丝
 
         .tabsContainer
-            +createTab("消息", `/profile/${profileUser.username}`, true)
-            +createTab("评论", `/profile/${profileUser.username}/replies`, false)
+            +createTab("消息", `/profile/${profileUser.username}`, selectedTab != "replies")
+            +createTab("评论", `/profile/${profileUser.username}/replies`, selectedTab == "replies")
 
         .postsContainer
         +createPostModals(currentUser)

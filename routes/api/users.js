@@ -32,4 +32,28 @@ router.put("/:userId/follow", async (req, res, next) => {
     res.status(200).send(req.session.user)
 })
 
+/**
+ * @route       get /:id/followers
+ * @description 获取粉丝数据接口
+ * @access      private
+ */
+router.get("/:userId/followers", async (req, res, next) => {
+    UserInfo.findById(req.params.userId)
+        .populate("followers")
+        .then(results => res.status(200).send(results))
+        .catch(error => res.status(400).send(error))
+})
+
+/**
+ * @route       get /:id/following
+ * @description 获取关注者数据接口
+ * @access      private
+ */
+router.get("/:userId/following", async (req, res, next) => {
+    UserInfo.findById(req.params.userId)
+        .populate("following")
+        .then(results => res.status(200).send(results))
+        .catch(error => res.status(400).send(error))
+})
+
 module.exports = router
