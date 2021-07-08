@@ -35,6 +35,20 @@ function showUsers(results, container) {
 }
 
 function createUserInfoHtml(userData) {
+    let followButton = ""
+
+    const isFollowing = currentUser.following && currentUser.following.includes(userData._id)
+    const text = isFollowing ? "已关注" : "关注"
+    const buttonClass = isFollowing ? "followButton following" : "followButton"
+
+    if (currentUser._id != userData._id) {
+        followButton = `
+            <div class="followButtonContainer">
+                <button class="${buttonClass}" data-user="${userData._id}">${text}</button>
+            </div>
+        `
+    }
+
     return `
         <div class="user">
             <div class="userImageContainer">
@@ -46,6 +60,7 @@ function createUserInfoHtml(userData) {
                     <span class="username">@${userData.username}</span>
                 </div>
             </div>
+            ${followButton}
         </div>
     `
 }
