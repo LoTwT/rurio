@@ -10,6 +10,8 @@ const UserInfoSchema = new Schema({
     likes: [{ type: Schema.Types.ObjectId, ref: "PostInfo" }],
     // 从用户角度考虑: 该用户转发了哪条消息
     retweets: [{ type: Schema.Types.ObjectId, ref: "PostInfo" }],
+    following: [{ type: Schema.Types.ObjectId, ref: "UserInfo" }],
+    followers: [{ type: Schema.Types.ObjectId, ref: "UserInfo" }],
 }, { timestamps: true })
 
 module.exports = mongoose.model("UserInfo", UserInfoSchema)

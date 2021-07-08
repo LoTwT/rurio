@@ -145,6 +145,34 @@ $(document).on("click", ".retweetButton", event => {
 })
 
 /**
+ * 关注事件
+ */
+$(document).on("click", ".followButton", event => {
+    const button = $(event.target)
+    const userId = button.data().user
+
+    // 发起请求
+    $.ajax({
+        url: `/api/users/${userId}/follow`,
+        type: "PUT",
+        success: (data, status, xhr) => {
+            if (xhr.status == 404) {
+                alert("user not found")
+                return
+            }
+
+            if (data.following && data.following.includes(userId)) {
+                button.addClass("following")
+                button.text("已关注")
+            } else {
+                button.removeClass("following")
+                button.text("关注")
+            }
+        }
+    })
+})
+
+/**
  * 点击消息 进行跳转
  */
 $(document).on("click", ".post", event => {
@@ -200,7 +228,7 @@ function createPostInfoHtml(postData, largeFont = false) {
     }
 
     // 删除按钮
-    let button = ""
+    let buttons = ""
 
     // 判断是否是当前登录用户的消息
     if (postData.postedBy._id === currentUser._id) {
